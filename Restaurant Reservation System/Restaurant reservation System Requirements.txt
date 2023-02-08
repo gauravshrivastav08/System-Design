@@ -1,0 +1,94 @@
+Restaurant Reservation System:
+
+Functional Requirements:
+
+User:
+User should be able to search the Restaurants based upon location, Srach based upon criteria like price range, their rating [food, ambeince, staff hospitality, pricing] and ocasion.
+
+Check Rest. availability and tables/seats available 
+User should be able to select a slot and book a table[s]. 
+User should be able to cancel the booking. 
+Check-in into hotel and pay the cheque.
+
+
+Restaurant:
+Rest. owner should be able to onboard a rest.
+Rest. owner should be able to update the menu, pricing, images and video related to Rest. 
+Rest. should be able to accept/cancel the booking for a particular time slot. 
+
+Analytics:
+Rest. owner wants to know how many bookings has been handled in past year.
+What's the total revenue Rest. are generating etc. 
+What are the top branches are there for a Restaurant. 
+
+
+
+Non Functional Requirements: 
+
+- Low Latency and high throughput 
+- High Availability
+- High Consistency 
+- Scale 
+  500K Restaurants 
+  30 M tables 
+  100 Table/Restaurant [Max 300 tables]
+  
+
+Tables:
+
+Restaurant DB: 
+ Restaurant: Rest_id, Rest_Name, location_id, phone_number, Original_images, display_images, is_active
+
+ Locality: location_id, city_id, state_id, country_id, Address
+ 
+ Menu: Rest_id, item_id, item_name, description, item_price_min, item_price_max, quantity 
+  
+GET      /Restaurants/id
+POST     /Restaurants
+PUT      /Restaurants/id/Menu/id
+PUT      /Restaurants/id
+DELETE   /Restaurants/id/
+ 
+ 
+Booking DB: 
+
+ Customer: customer_id, name, email, phone_number 
+ 
+ Booking: booking_id, table_id, customer_id, date, time, people_count, status, checkin_time, Rest_id, invoice-id
+ 
+ ==> Status -> booked, cancelled, completed 
+ 
+ Available_Tables: Rest_id, table_id, Date, booking_quantity, available_quantity, 
+ 
+
+==> POST /Book [Rest_id, customer_id, table_id, quantity, date, time] 
+    
+	Check if any table is avbailable in that Restaurant 
+	If a table available, then book it and then reduce it from Available_tables 
+	Put in KAFKA
+	Put in Redis 
+
+
+Practo time slot => 
+ 
+ # Table_Seats: table_id, booked_seats, available_seats, seat_type [outdoor, indoor]
+ 
+ 
+a.) Notification: Notification_id, created_date, content, Mobile_notification, Email_notification 
+b.) Bill/Cheque: cheque_id, ammount, date_time, tip, tax, is_paid, customer_id
+c.) Menu: item_id, item_name, description, item_price_min, item_price_max, quantity
+
+d.) Payment: invoice_id, ammount, datetime, ModeOfTransaction
+
+
+
+POST/book
+[c_id, table_id, Rest_id, booking time, booking date] 
+
+1. Check available tables 
+2. Insert in booking table and reduce quantity in Available_Tables 
+3. Put in redis with TTL
+4. Put in Kafka 
+
+
+Monitoring resources across Infrastructure [CPU, Memory, Disk] 
